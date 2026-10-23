@@ -1,5 +1,31 @@
 # Host setup: PCIe ASPM disable, native ROCm+vLLM install
 
+## Container ROCm/HIP setup (first install)
+
+`install-rocm-gfx803.sh` pulls the published gfx803 ROCm image, installs Docker if
+needed, and compiles/runs a small HIP kernel on every GPU visible to ROCm. It
+is the recommended first step for checking whether the host's current kernel
+and `amdgpu/amdkfd` setup can run HIP on Polaris. ROCm libraries and `hipcc`
+remain inside the container; this does not replace the host's driver or Vulkan
+stack and does not download AI models.
+
+Run it from the repository root:
+
+```sh
+bash tools/host-setup/install-rocm-gfx803.sh
+```
+
+On success, open the interactive environment with:
+
+```sh
+rocm-gfx803-shell
+```
+
+The container's persistent working directory is `~/rocm-gfx803-work`. The
+installer needs `/dev/kfd` and `/dev/dri` from the host. If `/dev/kfd` is
+missing, fix the host kernel/driver setup first; the installer intentionally
+does not patch or replace it.
+
 ## PCIe ASPM disable
 
 See the main `README.md`'s "Host BIOS setting: keep PCIe ASPM off" section
